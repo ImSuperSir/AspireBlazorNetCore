@@ -1,0 +1,52 @@
+﻿@page "/product"
+@using BlazorAspire.Web.Components.BaseComponents
+<h3>IndexProduct</h3>
+
+@if (ProductModels == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <a class="btn btn-primary" href="/product/create">Create</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ProductName</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>CreatedAt</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in ProductModels)
+            {
+                <tr>
+                    <td>@product.ProductName</td>
+                    <td>@product.Quantity</td>
+                    <td>@product.Price</td>
+                    <td>@product.Description</td>
+                    <td>@product.CreatedAt.ToString("d")</td>
+                    <td>
+                        <a class="btn btn-primary" href="/product/update/@product.Id">Update</a>
+                        <a class="btn btn-danger" @onclick="() => { DeleteId = product.Id; Modal.Show();}" >Delete</a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <AppModal @ref="Modal">
+        <Title>Notification</Title>
+        <Body>
+            Do you want to delete this product?
+        </Body>
+        <Footer>
+            <button type="button" class="btn btn-primary" style="width:80px" @onclick="HandleDelete">Yes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Modal.Close()">No</button>
+        </Footer>
+    </AppModal>
+}
