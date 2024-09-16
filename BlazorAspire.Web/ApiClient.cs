@@ -1,18 +1,31 @@
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Newtonsoft.Json;
 
 namespace BlazorAspire.Web;
 
-public class ApiClient(HttpClient httpClient)
+public class ApiClient(HttpClient httpClient, ProtectedLocalStorage protectedLocalStorage)
 {
-    public Task<T> GetFromJsonAsync<T>(string path)
+    public async Task SetAuthorizationHeader()
     {
-        return httpClient.GetFromJsonAsync<T>(path);
+        var token = (await protectedLocalStorage.GetAsync<string>("authtoken")).Value;
+        if (!string.IsNullOrEmpty(token))
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+    }
+
+    public async Task<T> GetFromJsonAsync<T>(string path)
+    {
+        await SetAuthorizationHeader();
+        return await httpClient.GetFromJsonAsync<T>(path);
     }
     public async Task<T1> PostAsync<T1, T2>(string path, T2 postModel)
     {
+        await SetAuthorizationHeader();
         var res = await httpClient.PostAsJsonAsync(path, postModel);
         if(res != null && res.IsSuccessStatusCode)
         {
@@ -22,6 +35,7 @@ public class ApiClient(HttpClient httpClient)
     }
     public async Task<T1> PutAsync<T1, T2>(string path, T2 postModel)
     {
+        await SetAuthorizationHeader();
         var res = await httpClient.PutAsJsonAsync(path, postModel);
         if(res != null && res.IsSuccessStatusCode)
         {
@@ -31,6 +45,7 @@ public class ApiClient(HttpClient httpClient)
     }
     public async Task<T> DeleteAsync<T>(string path)
     {
+        await SetAuthorizationHeader();
         return await httpClient.DeleteFromJsonAsync<T>(path);
     }
 }

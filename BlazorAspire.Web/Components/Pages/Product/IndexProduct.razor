@@ -1,6 +1,9 @@
 ﻿@page "/product"
 @using BlazorAspire.Web.Components.BaseComponents
-<h3>IndexProduct</h3>
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+
+@attribute [Authorize(Roles = "Admin,User")]
 
 @if (ProductModels == null)
 {
@@ -31,7 +34,11 @@ else
                     <td>@product.CreatedAt.ToString("d")</td>
                     <td>
                         <a class="btn btn-primary" href="/product/update/@product.Id">Update</a>
-                        <a class="btn btn-danger" @onclick="() => { DeleteId = product.Id; Modal.Show();}" >Delete</a>
+                        <AuthorizeView Roles="Admin">
+                            <Authorized>
+                                <a class="btn btn-danger" @onclick="() => { DeleteId = product.Id; Modal.Show();}" >Delete</a>
+                            </Authorized>
+                        </AuthorizeView>
                     </td>
 
                 </tr>
@@ -50,3 +57,4 @@ else
         </Footer>
     </AppModal>
 }
+    

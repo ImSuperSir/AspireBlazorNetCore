@@ -11,7 +11,7 @@ namespace BlazorAspire.ApiService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles="Admin,User")]
     public class ProductController(IProductService productService) : ControllerBase
     {
 

@@ -1,7 +1,9 @@
 using BlazorAspire.Web;
+using BlazorAspire.Web.Authentication;
 using BlazorAspire.Web.Components;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -16,6 +18,13 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddOutputCache();
 builder.Services.AddBlazoredToast();
+
+
+
+builder.Services.AddAuthentication();
+builder.Services.AddCascadingAuthenticationState();
+
+builder.Services.AddScoped<AuthenticationStateProvider,CustomAuthStateProvider>();
 
 
 
@@ -39,6 +48,9 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseOutputCache();
 

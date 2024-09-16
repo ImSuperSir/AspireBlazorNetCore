@@ -21,4 +21,6 @@ dotnet add reference ..\BlazorAspire.Model\BlazorAspire.Model.csproj
             ErrorIcon="fa fa-bug"
         />
 
+//authentication
+dotnet add package Microsoft.AspNetcore.Authentication.JwtBearer  --> JwtSecurityTokenHandler
         
