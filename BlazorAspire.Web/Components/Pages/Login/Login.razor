@@ -34,7 +34,7 @@
         if (res != null && res.Token != null)
         {
             //we shoud use a CustomAuthStateProvider to set the token
-            await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res.Token);
+            await ((CustomAuthStateProvider)AuthStateProvider).MarkUserAsAuthenticated(res);
             NavigationManager.NavigateTo("/");
         }
     }

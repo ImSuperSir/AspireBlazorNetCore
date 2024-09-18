@@ -2,6 +2,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using BlazorAspire.Model.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
@@ -11,8 +12,8 @@ public class CustomAuthStateProvider(ProtectedLocalStorage protectedLocalStorage
 {
     public async override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = (await protectedLocalStorage.GetAsync<string>("authtoken")).Value;
-        var identity = string.IsNullOrEmpty(token) ? new ClaimsIdentity() : GetClaimsIdentity(token);
+        var sessionModel = (await protectedLocalStorage.GetAsync<LoginResponseModel>("sessionState")).Value;
+        var identity = sessionModel == null ? new ClaimsIdentity() : GetClaimsIdentity(sessionModel.Token);
         var user = new ClaimsPrincipal(identity);
         return new AuthenticationState(user);
 
@@ -24,10 +25,10 @@ public class CustomAuthStateProvider(ProtectedLocalStorage protectedLocalStorage
 
     }
 
-    public async Task MarkUserAsAuthenticated(string token)
+    public async Task MarkUserAsAuthenticated(LoginResponseModel model)
     {
-        await protectedLocalStorage.SetAsync("authtoken", token);
-        var identity = GetClaimsIdentity(token);
+        await protectedLocalStorage.SetAsync("sessionState", model);
+        var identity = GetClaimsIdentity(model.Token);
         var user = new ClaimsPrincipal(identity);
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
     }
@@ -43,7 +44,7 @@ public class CustomAuthStateProvider(ProtectedLocalStorage protectedLocalStorage
 
     public async Task MarkUserAsLoggedOut()
     {
-        await protectedLocalStorage.DeleteAsync("authtoken");
+        await protectedLocalStorage.DeleteAsync("sessionState");
         var identity = new ClaimsIdentity();
         var user = new ClaimsPrincipal(identity);
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
