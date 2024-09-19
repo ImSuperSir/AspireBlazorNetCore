@@ -15,7 +15,7 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<ProductModel>( entity =>
+        modelBuilder.Entity<ProductModel>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Price).HasPrecision(18, 2);
@@ -23,4 +23,12 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<ProductModel> Products { get; set; }
+
+    public DbSet<UserModel> Users { get; set; }
+
+    public DbSet<RoleModel> Roles { get; set; }
+
+    public DbSet<UserRoleModel> UserRoles { get; set; }
+
+    public DbSet<RefreshTokenModel> RefreshTokens { get; set; }
 }
